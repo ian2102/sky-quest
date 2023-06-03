@@ -223,8 +223,6 @@ pub fn spawn_cubes(
 
     let cube_mesh = meshes.add(shape::Cube::new(VOXEL_SIZE).into());
 
-    //let cube_mesh = meshes.add(create_low_resolution_cube_mesh(VOXEL_SIZE, 10));
-
     let instance_material = materials.add(StandardMaterial {
         base_color: Color::BEIGE,
         perceptual_roughness: 0.3,
