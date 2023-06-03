@@ -75,13 +75,11 @@ fn initial_grab_cursor(mut primary_window: Query<&mut Window, With<PrimaryWindow
 }
 
 fn calculate_fov(value: f32) -> f32 {
-    // Define the input range (1-10) and the desired output range (40-120)
     let input_min = 1.0;
     let input_max = 10.0;
     let output_min = 40.0;
     let output_max = 160.0;
 
-    // Scale the input value to the output range
     let scaled_value = (value - input_min) / (input_max - input_min);
     let output_value = output_min + (output_max - output_min) * scaled_value;
     println!("{}", output_value);
@@ -235,8 +233,6 @@ impl Plugin for PlayerPlugin {
             .init_resource::<MovementSettings>()
             .init_resource::<KeyBindings>()
             .add_system(setup_player.in_schedule(OnEnter(GameState::InGame)))
-            //.add_system(cleanup::<Player>.in_schedule(OnEnter(MenuState::SettingsFov)))
-            //.add_system(setup_player.in_schedule(OnExit(MenuState::SettingsFov)))
             .add_system(initial_grab_cursor.in_schedule(OnEnter(GameState::InGame)))
             .add_system(cleanup::<Player>.in_schedule(OnExit(GameState::InGame)))
             .insert_resource(MovementSettings {
