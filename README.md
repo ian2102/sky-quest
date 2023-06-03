@@ -1,7 +1,7 @@
 # Sky Quest - Ball Collecting Battle Royale Game
 
 Sky Quest is an exhilarating battle royale game powered by Rust and Bevy. In this game, players engage in an intense experience, collecting blue balls scattered across a procedurally generated voxel map.
-
+You can play Sky Quest directly in your browser by visiting https://ian2102.github.io/. 
 # Installation and Running
 
 -----
