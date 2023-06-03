@@ -1,6 +1,3 @@
-//! This example will display a simple menu using Bevy UI where you can start a new game,
-//! change some settings or quit. There is no actual game, it will just display the current
-//! settings for 5 seconds before going back to the menu.
 use crate::menu::splash::SplashPlugin;
 use crate::prelude::*;
 use bevy::{app::AppExit, prelude::*};
@@ -16,9 +13,6 @@ impl Plugin for MenuPlugin {
             .insert_resource(Volume(7))
             .insert_resource(Pause { paused: false })
             .add_plugin(SplashPlugin)
-            // At start, the menu is not enabled. This will be changed in `menu_setup` when
-            // entering the `GameState::Menu` state.
-            // Current screen in the menu is handled by an independent state from `GameState`
             .add_state::<MenuState>()
             .add_systems((
                 setup_camera.in_schedule(OnEnter(GameState::Menu)),
@@ -27,57 +21,46 @@ impl Plugin for MenuPlugin {
                 menu_setup.in_schedule(OnEnter(GameState::Menu)),
                 cleanup::<Camera>.in_schedule(OnExit(GameState::Menu)),
             ))
-            // Systems to handle the main menu screen
             .add_systems((
                 main_menu_setup.in_schedule(OnEnter(MenuState::Main)),
                 cleanup::<OnMainMenuScreen>.in_schedule(OnExit(MenuState::Main)),
             ))
-            // Systems to handle the settings menu screen
             .add_systems((
                 settings_menu_setup.in_schedule(OnEnter(MenuState::Settings)),
                 cleanup::<OnSettingsMenuScreen>.in_schedule(OnExit(MenuState::Settings)),
             ))
-            // Systems to handle the display settings screen
             .add_systems((
                 display_settings_menu_setup.in_schedule(OnEnter(MenuState::SettingsDisplay)),
                 setting_button::<DisplayQuality>.in_set(OnUpdate(MenuState::SettingsDisplay)),
                 cleanup::<OnDisplaySettingsMenuScreen>
                     .in_schedule(OnExit(MenuState::SettingsDisplay)),
             ))
-            // Systems to handle the sound settings screen
             .add_systems((
                 sound_settings_menu_setup.in_schedule(OnEnter(MenuState::SettingsSound)),
                 setting_button::<Volume>.in_set(OnUpdate(MenuState::SettingsSound)),
                 cleanup::<OnSoundSettingsMenuScreen>.in_schedule(OnExit(MenuState::SettingsSound)),
             ))
-            // Systems to handle the sound settings screen
             .add_systems((
                 fov_settings_menu_setup.in_schedule(OnEnter(MenuState::SettingsFov)),
                 setting_button::<Fov>.in_set(OnUpdate(MenuState::SettingsFov)),
                 cleanup::<OnFovSettingsMenuScreen>.in_schedule(OnExit(MenuState::SettingsFov)),
             ))
-            // Common systems to all screens that handles buttons behaviour
             .add_systems((menu_action, button_system).in_set(OnUpdate(GameState::Menu)));
     }
 }
 
-// Tag component used to tag entities added on the main menu screen
 #[derive(Component)]
 struct OnMainMenuScreen;
 
-// Tag component used to tag entities added on the settings menu screen
 #[derive(Component)]
 struct OnSettingsMenuScreen;
 
-// Tag component used to tag entities added on the display settings menu screen
 #[derive(Component)]
 struct OnDisplaySettingsMenuScreen;
 
-// Tag component used to tag entities added on the sound settings menu screen
 #[derive(Component)]
 struct OnSoundSettingsMenuScreen;
 
-// Tag component used to tag entities added on the sound settings menu screen
 #[derive(Component)]
 struct OnFovSettingsMenuScreen;
 
@@ -86,11 +69,9 @@ const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
 const HOVERED_PRESSED_BUTTON: Color = Color::rgb(0.25, 0.65, 0.25);
 const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
 
-// Tag component used to mark which setting is currently selected
 #[derive(Component)]
 struct SelectedOption;
 
-// All actions that can be triggered from a button click
 #[derive(Component)]
 enum MenuButtonAction {
     Play,
@@ -104,7 +85,6 @@ enum MenuButtonAction {
     Resume,
 }
 
-// This system handles changing all buttons color based on mouse interaction
 fn button_system(
     mut interaction_query: Query<
         (&Interaction, &mut BackgroundColor, Option<&SelectedOption>),
@@ -121,8 +101,6 @@ fn button_system(
     }
 }
 
-// This system updates the settings when a new value for a setting is selected, and marks
-// the button as the one currently selected
 fn setting_button<T: Resource + Component + PartialEq + Copy>(
     interaction_query: Query<(&Interaction, &T, Entity), (Changed<Interaction>, With<Button>)>,
     mut selected_query: Query<(Entity, &mut BackgroundColor), With<SelectedOption>>,
@@ -146,7 +124,6 @@ fn menu_setup(mut menu_state: ResMut<NextState<MenuState>>) {
 
 fn main_menu_setup(mut commands: Commands, asset_server: Res<AssetServer>, pause: ResMut<Pause>) {
     let font = asset_server.load("fonts/FiraSans-Bold.ttf");
-    // Common style for all buttons on the screen
     let button_style = Style {
         size: Size::new(Val::Px(250.0), Val::Px(65.0)),
         margin: UiRect::all(Val::Px(20.0)),
@@ -156,9 +133,7 @@ fn main_menu_setup(mut commands: Commands, asset_server: Res<AssetServer>, pause
     };
     let button_icon_style = Style {
         size: Size::new(Val::Px(30.0), Val::Auto),
-        // This takes the icons out of the flexbox flow, to be positioned exactly
         position_type: PositionType::Absolute,
-        // The icon will be close to the left border of the button
         position: UiRect {
             left: Val::Px(10.0),
             right: Val::Auto,
@@ -213,12 +188,6 @@ fn main_menu_setup(mut commands: Commands, asset_server: Res<AssetServer>, pause
                             ..default()
                         }),
                     );
-
-                    // Display three buttons for each action available from the main menu:
-                    // - new game
-                    // - settings
-                    // - quit
-
                     if pause.paused {
                         parent
                             .spawn((
@@ -416,8 +385,6 @@ fn display_settings_menu_setup(
                     ..default()
                 })
                 .with_children(|parent| {
-                    // Create a new `NodeBundle`, this time not setting its `flex_direction`. It will
-                    // use the default value, `FlexDirection::Row`, from left to right.
                     parent
                         .spawn(NodeBundle {
                             style: Style {
@@ -428,12 +395,10 @@ fn display_settings_menu_setup(
                             ..default()
                         })
                         .with_children(|parent| {
-                            // Display a label for the current setting
                             parent.spawn(TextBundle::from_section(
                                 "Display Quality",
                                 button_text_style.clone(),
                             ));
-                            // Display a button for each possible value
                             for quality_setting in [
                                 DisplayQuality::Low,
                                 DisplayQuality::Medium,
@@ -458,7 +423,6 @@ fn display_settings_menu_setup(
                                 }
                             }
                         });
-                    // Display the back button to return to the settings screen
                     parent
                         .spawn((
                             ButtonBundle {
