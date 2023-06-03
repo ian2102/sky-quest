@@ -1,0 +1,30 @@
+[package]
+name = "sky-quest"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = "0.10.1"
+bevy-inspector-egui = "0.18.3"
+bevy_rapier3d = { version = "0.21.0", features = [ "simd-stable", "debug-render-3d" ] }
+noise = "0.8.2"
+rand = "0.8.5"
+
+[profile.release]
+codegen-units = 1
+debug = false
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true
+
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
+
