@@ -12,8 +12,6 @@ use bevy::{
     window::{PresentMode, WindowPlugin},
 };
 use bevy_rapier3d::prelude::*;
-//use bevy_inspector_egui::quick::WorldInspectorPlugin;
-//use bevy::input::common_conditions::input_toggle_active;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
@@ -27,13 +25,11 @@ fn main() {
             ..Default::default()
         }))
         .add_state::<GameState>()
-        //.add_plugin(WorldInspectorPlugin::default().run_if(input_toggle_active(true, KeyCode::Key9)),)
         .add_plugin(MenuPlugin)
         .add_plugin(PlayerPlugin)
         .add_plugin(GamePlugin)
         .add_plugin(bevy::diagnostic::SystemInformationDiagnosticsPlugin::default())
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
-        //.add_system(bevy::window::close_on_esc)
         .run();
 }
