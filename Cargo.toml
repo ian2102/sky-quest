@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 bevy = "0.10.1"
-bevy-inspector-egui = "0.18.3"
 bevy_rapier3d = { version = "0.21.0", features = [ "simd-stable", "debug-render-3d" ] }
 noise = "0.8.2"
 rand = "0.8.5"
