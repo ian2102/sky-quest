@@ -24,7 +24,6 @@ pub struct TextChanges;
 #[derive(Component)]
 pub struct Cursor;
 
-// Enum that will be used as a global state for the game
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
 pub enum GameState {
     Menu,
@@ -72,8 +71,6 @@ pub struct Visible {
 #[derive(Component)]
 pub struct Renderable;
 
-
-// One of the two settings that can be set through the menu. It will be a resource in the app
 #[derive(Resource, Debug, Component, PartialEq, Eq, Clone, Copy)]
 pub enum DisplayQuality {
     Low,
@@ -81,16 +78,12 @@ pub enum DisplayQuality {
     High,
 }
 
-
-// One of the two settings that can be set through the menu. It will be a resource in the app
 #[derive(Resource, Debug, Component, PartialEq, Eq, Clone, Copy)]
 pub struct Volume(pub u32);
 
 #[derive(Resource, Debug, Component, PartialEq, Eq, Clone, Copy)]
 pub struct Fov(pub u32);
 
-
-// State used for the current menu screen
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
 pub enum MenuState {
     Main,
@@ -102,8 +95,6 @@ pub enum MenuState {
     Disabled,
 }
 
-
-// Newtype to use a `Timer` for this screen as a resource
 #[derive(Resource, Deref, DerefMut)]
 pub struct HitTimer(pub Timer);
 
